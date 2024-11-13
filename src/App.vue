@@ -4,6 +4,7 @@ import { ref } from "vue";
 const name = ref("John Doe");
 const status = ref("active");
 const tasks = ref(["Task One", "Task Two", "Task Three"]);
+const newTask = ref("");
 const toggleStatus = () => {
   switch (status.value) {
     case "active":
@@ -16,17 +17,39 @@ const toggleStatus = () => {
       status.value = "active";
   }
 };
+
+const addTask = () => {
+  if (newTask.value) {
+    tasks.value.push(newTask.value);
+    newTask.value = "";
+  }
+};
+
+const deleteTask = (index) => {
+  tasks.value.splice(index, 1);
+};
 </script>
 
 <template>
   <h1>{{ name }}</h1>
   <p v-if="status === 'active'">User is active</p>
   <p v-else-if="status == 'pending'">User is pending</p>
-  <p v-else="status">User is inactive</p>
+  <p v-else>User is inactive</p>
+
+  <form @submit.prevent="addTask">
+    <label for="newTask">Add Task</label>
+    <input type="text" id="newTask" name="newTask" v-model="newTask" />
+    <button type="submit">Submit</button>
+  </form>
 
   <h3>Tasks:</h3>
   <ul>
-    <li v-for="task in tasks" :key="task">{{ task }}</li>
+    <li v-for="(task, index) in tasks" :key="task">
+      <span>
+        {{ task }}
+      </span>
+      <button @click="deleteTask(index)">Delete</button>
+    </li>
   </ul>
   <br />
   <!-- <button v-on:click="toggleStatus">Change Status</button> -->
